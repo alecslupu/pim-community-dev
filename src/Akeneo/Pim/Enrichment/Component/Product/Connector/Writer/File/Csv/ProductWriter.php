@@ -2,6 +2,7 @@
 
 namespace Akeneo\Pim\Enrichment\Component\Product\Connector\Writer\File\Csv;
 
+use Akeneo\Pim\Enrichment\Component\Product\Connector\Writer\File\AbstractEntityWithFamilyFlatWriter;
 use Akeneo\Tool\Component\Batch\Item\FlushableInterface;
 use Akeneo\Tool\Component\Batch\Item\InitializableInterface;
 use Akeneo\Tool\Component\Batch\Item\ItemWriterInterface;
@@ -16,7 +17,7 @@ use Akeneo\Tool\Component\Connector\Writer\File\ArchivableWriterInterface;
  * @copyright 2015 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class ProductWriter extends AbstractItemMediaWriter implements
+class ProductWriter extends AbstractEntityWithFamilyFlatWriter implements
     ItemWriterInterface,
     InitializableInterface,
     FlushableInterface,

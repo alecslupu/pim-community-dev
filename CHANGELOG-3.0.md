@@ -13,6 +13,7 @@
 - PIM-7660: Improve performance of the product grid by using a dedicated read model
 - PIM-7499: Improve the performance of the completeness widget in the dashboard
 - PIM-7371: Improve the performance of the category tree in the product grid
+- TIP-899: Improve product export performance by computing headers at the end
 
 ## Enhancements
 
