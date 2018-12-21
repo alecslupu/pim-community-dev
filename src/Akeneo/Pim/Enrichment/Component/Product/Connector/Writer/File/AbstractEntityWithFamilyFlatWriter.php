@@ -22,8 +22,11 @@ abstract class AbstractEntityWithFamilyFlatWriter extends AbstractItemMediaWrite
     /** @var array */
     protected $familyCodes;
 
-    /** @var GenerateFlatHeadersInterface */
-    protected $generateHeaders;
+    /** @var GenerateFlatHeadersFromFamilyCodesInterface */
+    protected $generateHeadersFromFamilyCodes;
+
+    /** @var GenerateFlatHeadersFromAttributeCodesInterface */
+    protected $generateHeadersFromAttributeCodes;
 
     public function __construct(
         ArrayConverterInterface $arrayConverter,
@@ -31,7 +34,8 @@ abstract class AbstractEntityWithFamilyFlatWriter extends AbstractItemMediaWrite
         FlatItemBufferFlusher $flusher,
         AttributeRepositoryInterface $attributeRepository,
         FileExporterPathGeneratorInterface $fileExporterPath,
-        GenerateFlatHeadersInterface $generateHeaders,
+        GenerateFlatHeadersFromFamilyCodesInterface $generateHeadersFromFamilyCodes,
+        GenerateFlatHeadersFromAttributeCodesInterface $generateHeadersFromAttributeCodes,
         array $mediaAttributeTypes,
         string $jobParamFilePath = self::DEFAULT_FILE_PATH
     ) {
@@ -45,7 +49,8 @@ abstract class AbstractEntityWithFamilyFlatWriter extends AbstractItemMediaWrite
             $jobParamFilePath
         );
 
-        $this->generateHeaders = $generateHeaders;
+        $this->generateHeadersFromFamilyCodes = $generateHeadersFromFamilyCodes;
+        $this->generateHeadersFromAttributeCodes = $generateHeadersFromAttributeCodes;
     }
 
     /**
@@ -80,8 +85,8 @@ abstract class AbstractEntityWithFamilyFlatWriter extends AbstractItemMediaWrite
         $parameters = $this->stepExecution->getJobParameters();
 
         if ($parameters->has('withHeader') && true === $parameters->get('withHeader')) {
-            $headersFromFamilies = $this->getHeadersFromFamilyCodes($this->familyCodes, $parameters);
-            $this->flatRowBuffer->addToHeaders($headersFromFamilies);
+            $additionalHeaders = $this->getAdditionalHeaders($parameters);
+            $this->flatRowBuffer->addToHeaders($additionalHeaders);
         }
 
         parent::flush();
@@ -91,14 +96,14 @@ abstract class AbstractEntityWithFamilyFlatWriter extends AbstractItemMediaWrite
      * Return additional headers, based on the requested attributes if any,
      * and from the families definition
      */
-    protected function getHeadersFromFamilyCodes(?array $familyCodes, JobParameters $parameters): array
+    protected function getAdditionalHeaders(JobParameters $parameters): array
     {
         $filters = $parameters->get('filters');
 
         $localeCodes = isset($filters['structure']['locales']) ? $filters['structure']['locales'] : [$parameters->get('locale')];
         $channelCode = isset($filters['structure']['scope']) ? $filters['structure']['scope'] : $parameters->get('scope');
 
-        $attributeCodes = null;
+        $attributeCodes = [];
 
         if (isset($filters['structure']['attributes'])
             && !empty($filters['structure']['attributes'])) {
@@ -107,14 +112,25 @@ abstract class AbstractEntityWithFamilyFlatWriter extends AbstractItemMediaWrite
             $attributeCodes = $parameters->get('selected_properties');
         }
 
+        $headers = [];
+        if (!empty($attributeCodes)) {
+            $headers = ($this->generateHeadersFromAttributeCodes)($attributeCodes, $channelCode, $localeCodes);
+        } elseif (!empty($this->familyCodes)) {
+            $headers = ($this->generateHeadersFromFamilyCodes)($this->familyCodes, $channelCode, $localeCodes);
+        }
+
         $withMedia = (!$parameters->has('with_media') || $parameters->has('with_media') && $parameters->get('with_media'));
 
-        return ($this->generateHeaders)(
-            $familyCodes,
-            $attributeCodes,
-            $channelCode,
-            $localeCodes,
-            $withMedia
-        );
+        $headerStrings = [];
+        foreach ($headers as $header) {
+            if ($withMedia || !$header->isMedia()) {
+                $headerStrings = array_merge(
+                    $headerStrings,
+                    $header->generateHeaderStrings()
+                );
+            }
+        }
+
+        return $headerStrings;
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Akeneo\Pim\Enrichment\Bundle\Storage\Sql\Connector\Writer\File\Flat;
 
 use Akeneo\Pim\Enrichment\Component\Product\Connector\Writer\File\FlatFileHeader;
-use Akeneo\Pim\Enrichment\Component\Product\Connector\Writer\File\GenerateFlatHeadersFromFamilyCodesInterface;
+use Akeneo\Pim\Enrichment\Component\Product\Connector\Writer\File\GenerateFlatHeadersFromAttributeCodesInterface;
 use Akeneo\Pim\Structure\Component\AttributeTypes;
 use Doctrine\DBAL\Connection;
 
@@ -14,7 +14,7 @@ use Doctrine\DBAL\Connection;
  * @copyright 2018 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class GenerateHeadersFromFamilyCodes implements GenerateFlatHeadersFromFamilyCodesInterface
+class GenerateHeadersFromAttributeCodes implements GenerateFlatHeadersFromAttributeCodesInterface
 {
     /** @var Connection */
     protected $connection;
@@ -25,12 +25,12 @@ class GenerateHeadersFromFamilyCodes implements GenerateFlatHeadersFromFamilyCod
     }
 
     /**
-     * Generate all possible headers from the provided family codes
+     * Generate all possible headers from the provided attribute codes
      *
      * @return FlatFileHeader[]
      */
     public function __invoke(
-        array $familyCodes,
+        array $attributeCodes,
         string $channelCode,
         array $localeCodes
     ): array {
@@ -56,19 +56,18 @@ SQL;
                    a.is_localizable,
                    a.attribute_type,
                    GROUP_CONCAT(l.code) AS specific_to_locales
-            FROM pim_catalog_family f
-              JOIN pim_catalog_family_attribute fa ON fa.family_id = f.id
-              JOIN pim_catalog_attribute a ON a.id = fa.attribute_id
+            FROM pim_catalog_attribute
+              JOIN pim_catalog_attribute a
               LEFT JOIN pim_catalog_attribute_locale al ON al.attribute_id = a.id
               LEFT JOIN pim_catalog_locale l on l.id = al.locale_id
-            WHERE f.code IN (:familyCodes)
+            WHERE a.code IN (:attributeCodes)
             GROUP BY a.id;
 SQL;
 
         $rawAttributesData = $this->connection->executeQuery(
             $attributesDataSql,
-            ['familyCodes' => $familyCodes],
-            ['familyCodes' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY]
+            ['attributeCodes' => $attributeCodes],
+            ['attributeCodes' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY]
         )->fetchAll();
 
         $mediaAttributeTypes = [

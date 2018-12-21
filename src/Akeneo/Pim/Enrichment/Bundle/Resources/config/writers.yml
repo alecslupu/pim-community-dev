@@ -58,6 +58,7 @@ services:
             - '@pim_catalog.repository.attribute'
             - '@pim_connector.writer.file.media_exporter_path_generator'
             - '@akeneo.pim.enrichment.connector.write.file.flat.generate_headers_from_family_codes'
+            - '@akeneo.pim.enrichment.connector.write.file.flat.generate_headers_from_attribute_codes'
             - ['pim_catalog_file', 'pim_catalog_image']
 
     pim_connector.writer.file.csv_product_model:
@@ -79,6 +80,7 @@ services:
             - '@pim_catalog.repository.attribute'
             - '@pim_connector.writer.file.media_exporter_path_generator'
             - '@akeneo.pim.enrichment.connector.write.file.flat.generate_headers_from_family_codes'
+            - '@akeneo.pim.enrichment.connector.write.file.flat.generate_headers_from_attribute_codes'
             - ['pim_catalog_file', 'pim_catalog_image']
             - 'filePathProduct'
 
@@ -102,6 +104,7 @@ services:
             - '@pim_catalog.repository.attribute'
             - '@pim_connector.writer.file.media_exporter_path_generator'
             - '@akeneo.pim.enrichment.connector.write.file.flat.generate_headers_from_family_codes'
+            - '@akeneo.pim.enrichment.connector.write.file.flat.generate_headers_from_attribute_codes'
             - ['pim_catalog_file', 'pim_catalog_image']
 
     pim_connector.writer.file.xlsx_product_model:
@@ -123,6 +126,7 @@ services:
             - '@pim_catalog.repository.attribute'
             - '@pim_connector.writer.file.media_exporter_path_generator'
             - '@akeneo.pim.enrichment.connector.write.file.flat.generate_headers_from_family_codes'
+            - '@akeneo.pim.enrichment.connector.write.file.flat.generate_headers_from_attribute_codes'
             - ['pim_catalog_file', 'pim_catalog_image']
             - 'filePathProduct'
 

@@ -15,16 +15,31 @@ class FlatFileHeader
     protected $code;
 
     /** @var bool */
-    protected $isLocalizable;
+    protected $isScopable;
+
+    /** @var string */
+    protected $channelCode;
 
     /** @var bool */
-    protected $isScopable;
+    protected $isLocalizable;
+
+    /** @var array */
+    protected $localeCodes;
+
+    /** @var bool */
+    protected $isMedia;
 
     /** @var bool */
     protected $usesUnit;
 
     /** @var bool */
     protected $usesCurrencies;
+
+    /** @var array */
+    protected $channelCurrencyCodes;
+
+    /** @var array */
+    protected $allCurrencyCodes;
 
     /** @var bool */
     protected $isLocaleSpecific;
@@ -35,9 +50,14 @@ class FlatFileHeader
     public function __construct(
         string $code,
         bool $isScopable,
+        ?string $channelCode,
         bool $isLocalizable,
+        ?array $localeCodes,
+        bool $isMedia,
         bool $usesUnit,
         bool $usesCurrencies,
+        ?array $channelCurrencyCodes,
+        ?array $allCurrencyCodes,
         bool $isLocaleSpecific,
         ?array $specificToLocales = null
     ) {
@@ -55,46 +75,59 @@ class FlatFileHeader
         }
 
         $this->code = $code;
+
         $this->isScopable = $isScopable;
+        $this->channelCode = $channelCode;
+
         $this->isLocalizable = $isLocalizable;
+        $this->localeCodes = $localeCodes;
+
+        $this->isMedia = $isMedia;
         $this->usesUnit = $usesUnit;
+
         $this->usesCurrencies = $usesCurrencies;
+        $this->channelCurrencyCodes = $channelCurrencyCodes;
+        $this->allCurrencyCodes = $allCurrencyCodes;
 
         $this->isLocaleSpecific = $isLocaleSpecific;
         $this->specificToLocales = $specificToLocales;
     }
 
     /**
+     * Indicate whether the header is associated to a media information
+     */
+    public function isMedia(): bool
+    {
+        return $this->isMedia;
+    }
+
+    /**
      * Generate headers string contextualized on channel
      */
-    public function generateHeaderStrings(
-        string $channelCode,
-        array $localeCodes,
-        array $channelCurrencyCodes,
-        array $allCurrencyCodes
-    ): array {
-        if ($this->isLocaleSpecific && count(array_intersect($localeCodes, $this->specificToLocales)) === 0) {
+    public function generateHeaderStrings(): array
+    {
+        if ($this->isLocaleSpecific && count(array_intersect($this->localeCodes, $this->specificToLocales)) === 0) {
             return [];
         }
 
         $prefixes = [];
 
         if ($this->isLocalizable && $this->isScopable) {
-            foreach ($localeCodes as $localeCode) {
+            foreach ($this->localeCodes as $localeCode) {
                 if (!$this->isLocaleSpecific ||
                     ($this->isLocaleSpecific && in_array($localeCode, $this->specificToLocales))) {
-                    $prefixes[] = sprintf('%s-%s-%s', $this->code, $localeCode, $channelCode);
+                    $prefixes[] = sprintf('%s-%s-%s', $this->code, $localeCode, $this->channelCode);
                 }
             }
         } elseif ($this->isLocalizable) {
-            foreach ($localeCodes as $localeCode) {
+            foreach ($this->localeCodes as $localeCode) {
                 if (!$this->isLocaleSpecific ||
                     ($this->isLocaleSpecific && in_array($localeCode, $this->specificToLocales))) {
                     $prefixes[] = sprintf('%s-%s', $this->code, $localeCode);
                 }
             }
         } elseif ($this->isScopable) {
-            $prefixes[] = sprintf('%s-%s', $this->code, $channelCode);
+            $prefixes[] = sprintf('%s-%s', $this->code, $this->channelCode);
         } else {
             $prefixes[] = $this->code;
         }
@@ -104,9 +137,9 @@ class FlatFileHeader
         if ($this->usesCurrencies) {
             foreach ($prefixes as $prefix) {
                 if ($this->isScopable) {
-                    $currencyCodesToUse = $channelCurrencyCodes;
+                    $currencyCodesToUse = $this->channelCurrencyCodes;
                 } else {
-                    $currencyCodesToUse = $allCurrencyCodes;
+                    $currencyCodesToUse = $this->allCurrencyCodes;
                 }
                 foreach ($currencyCodesToUse as $currencyCode) {
                     $headers[] = sprintf('%s-%s', $prefix, $currencyCode);

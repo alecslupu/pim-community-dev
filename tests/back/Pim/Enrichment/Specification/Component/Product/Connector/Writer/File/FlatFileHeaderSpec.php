@@ -11,17 +11,41 @@ class FlatFileHeaderSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = false
         );
 
         $this->shouldHaveType(FlatFileHeader::class);
+    }
+
+    function it_must_properly_indicate_if_it_is_a_media()
+    {
+        $this->beConstructedWith(
+            $code = 'my_code',
+            $isScopable = false,
+            $channelCode = null,
+            $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
+            $usesUnit = false,
+            $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
+            $isLocaleSpecific = false
+        );
+
+        $this->isMedia()->shouldReturn(true);
+
     }
 
     function it_must_be_throw_an_exception_when_missing_specific_to_locales_list()
@@ -31,9 +55,14 @@ class FlatFileHeaderSpec extends ObjectBehavior
             [
                 $code = 'my_code',
                 $isScopable = false,
+                $channelCode = null,
                 $isLocalizable = false,
+                $localeCodes = ['en_US', 'fr_FR'],
+                $isMedia = true,
                 $usesUnit = false,
                 $usesCurrencies = false,
+                $channelCurrencies = null,
+                $allCurrencies = null,
                 $isLocaleSpecific = true
             ]
         );
@@ -46,9 +75,14 @@ class FlatFileHeaderSpec extends ObjectBehavior
             [
                 $code = 'my_code',
                 $isScopable = false,
+                $channelCode = null,
                 $isLocalizable = false,
+                $localeCodes = ['en_US', 'fr_FR'],
+                $isMedia = true,
                 $usesUnit = true,
                 $usesCurrencies = true,
+                $channelCurrencies = ['USD', 'EUR'],
+                $allCurrencies = ['USD', 'EUR', 'GBP'],
                 $isLocaleSpecific = false
             ]
         );
@@ -59,19 +93,19 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = true,
             $specificToLocales = ['de_DE']
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([]);
+        $this->generateHeaderStrings()->shouldReturn([]);
     }
 
     function it_generates_a_header_string_if_locales_supported()
@@ -79,19 +113,19 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = true,
             $specificToLocales = ['en_US']
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn(['my_code']);
+        $this->generateHeaderStrings()->shouldReturn(['my_code']);
     }
 
     function it_generates_header_strings_for_supported_locales_when_localizable()
@@ -99,19 +133,19 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = true,
+            $localeCodes = ['en_US', 'fr_FR', 'fr_BE'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = true,
             $specificToLocales = ['en_US', 'de_DE', 'fr_BE']
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR', 'fr_BE'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-en_US',
             'my_code-fr_BE'
         ]);
@@ -122,19 +156,19 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = true,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = true,
             $specificToLocales = ['en_US']
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code',
             'my_code-unit'
         ]);
@@ -145,19 +179,19 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = true,
+            $channelCurrencies = ['USD', 'EUR'],
+            $allCurrencies = ['USD', 'EUR', 'GBP'],
             $isLocaleSpecific = true,
             $specificToLocales = ['en_US']
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-USD',
             'my_code-EUR',
             'my_code-GBP'
@@ -169,18 +203,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn(['my_code']);
+        $this->generateHeaderStrings()->shouldReturn(['my_code']);
     }
 
     function it_generates_a_header_string_for_non_scopable_non_localizable_with_unit()
@@ -188,18 +222,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = true,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code',
             'my_code-unit'
         ]);
@@ -210,18 +244,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = true,
+            $channelCurrencies = ['USD', 'EUR'],
+            $allCurrencies = ['USD', 'EUR', 'GBP'],
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-USD',
             'my_code-EUR',
             'my_code-GBP'
@@ -233,18 +267,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = true,
+            $channelCode = 'ecommerce',
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn(['my_code-ecommerce']);
+        $this->generateHeaderStrings()->shouldReturn(['my_code-ecommerce']);
     }
 
     function it_generates_a_header_string_for_scopable_non_localizable_with_unit()
@@ -252,18 +286,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = true,
+            $channelCode = 'ecommerce',
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = true,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-ecommerce',
             'my_code-ecommerce-unit'
         ]);
@@ -274,18 +308,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = true,
+            $channelCode = 'ecommerce',
             $isLocalizable = false,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = true,
+            $channelCurrencies = ['USD', 'EUR'],
+            $allCurrencies = ['USD', 'EUR', 'GBP'],
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-ecommerce-USD',
             'my_code-ecommerce-EUR'
         ]);
@@ -296,18 +330,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = true,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-en_US',
             'my_code-fr_FR'
         ]);
@@ -318,18 +352,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = true,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = true,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-en_US',
             'my_code-en_US-unit',
             'my_code-fr_FR',
@@ -342,18 +376,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = false,
+            $channelCode = null,
             $isLocalizable = true,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = true,
+            $channelCurrencies = ['USD', 'EUR'],
+            $allCurrencies = ['USD', 'EUR', 'GBP'],
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-en_US-USD',
             'my_code-en_US-EUR',
             'my_code-en_US-GBP',
@@ -368,18 +402,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = true,
+            $channelCode = 'ecommerce',
             $isLocalizable = true,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-en_US-ecommerce',
             'my_code-fr_FR-ecommerce'
         ]);
@@ -390,18 +424,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = true,
+            $channelCode = 'ecommerce',
             $isLocalizable = true,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = true,
             $usesCurrencies = false,
+            $channelCurrencies = null,
+            $allCurrencies = null,
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-en_US-ecommerce',
             'my_code-en_US-ecommerce-unit',
             'my_code-fr_FR-ecommerce',
@@ -414,18 +448,18 @@ class FlatFileHeaderSpec extends ObjectBehavior
         $this->beConstructedWith(
             $code = 'my_code',
             $isScopable = true,
+            $channelCode = 'ecommerce',
             $isLocalizable = true,
+            $localeCodes = ['en_US', 'fr_FR'],
+            $isMedia = true,
             $usesUnit = false,
             $usesCurrencies = true,
+            $channelCurrencies = ['USD', 'EUR'],
+            $allCurrencies = ['USD', 'EUR', 'GBP'],
             $isLocaleSpecific = false
         );
 
-        $this->generateHeaderStrings(
-            'ecommerce',
-            ['en_US', 'fr_FR'],
-            ['USD', 'EUR'],
-            ['USD', 'EUR', 'GBP']
-        )->shouldReturn([
+        $this->generateHeaderStrings()->shouldReturn([
             'my_code-en_US-ecommerce-USD',
             'my_code-en_US-ecommerce-EUR',
             'my_code-fr_FR-ecommerce-USD',
