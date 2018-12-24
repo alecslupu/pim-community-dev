@@ -66,7 +66,7 @@ jobs:
   test_legacy_behat:
     machine:
       enabled: true
-    parallelism: 7
+    parallelism: 4
     steps:
       - attach_workspace:
           at: ~/
@@ -87,7 +87,7 @@ jobs:
       - run:
           name: Failing_behats
           command: |
-            TESTFILES=$(cat behat.txt | circleci tests split)
+            TESTFILES=$(cat .circleci/behat.txt | circleci tests split)
             .circleci/run_behat.sh $TESTFILES
       - store_test_results:
           path: var/tests/behat
