@@ -3,19 +3,23 @@ jobs:
   build:
     machine:
       enabled: true
+      docker_layer_caching: true
     steps:
       - checkout
       - run:
           name: Copy env file
-          command: |
-            cp .env.dist .env
-            cp behat.yml.dist behat.yml
+          command: cp .env.dist .env
       - run:
           name: Setup tests results folder and log folder
           command: mkdir -p var/tests/phpunit var/tests/behat var/tests/phpspec var/tests/csfixer var/logs
       - run:
             name: Setup the parameters.yml files
             command: ./bin/docker/pim-setup.sh
+      - run:
+            name: Setup the batch size to 50
+            command: |
+              printf "    pim_job_product_batch_size: 50\n" >> app/config/parameters.yml
+              printf "    pim_job_product_batch_size: 50\n" >> app/config/parameters_test.yml
       - run:
             name: Change permissions on project dir (default user = circleci (1001) and docker needs uid 1000)
             command: chmod 777 ../project -R
@@ -42,6 +46,7 @@ jobs:
   test_phpunit:
       machine:
           enabled: true
+          docker_layer_caching: true
       parallelism: 1
       steps:
           - attach_workspace:
