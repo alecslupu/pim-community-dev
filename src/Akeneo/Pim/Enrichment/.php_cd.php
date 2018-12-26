@@ -30,23 +30,45 @@ $rules = [
         'Akeneo\Platform\Bundle\UIBundle\Provider\TranslatedLabelsProviderInterface',
         // TODO: EASY PICK! it should be registered in the structure bundle
         'Akeneo\Pim\Structure\Bundle\DependencyInjection\Compiler\RegisterAttributeTypePass',
+
+        // TIP-915: PIM/Enrichment should not be linked to AttributeOption
+        // TIP-916: Do not check if entities exist in PQB filters or sorters
+        'Akeneo\Pim\Structure\Component\Model\AttributeOptionInterface',
+        'Akeneo\Pim\Structure\Component\Repository\AttributeOptionRepositoryInterface',
+
+        // TIP-918: PIM/Enrichment should not be linked to GroupType
+        'Akeneo\Pim\Structure\Component\Model\GroupTypeInterface',
+
+        // TIP-920: PIM/Enrichment should not be linked to Locale
+        'Akeneo\Channel\Component\Model\LocaleInterface',
+        'Akeneo\Channel\Component\Repository\LocaleRepositoryInterface',
+
+        // TIP-921: PIM/Enrichment should not be linked to Channel
+        'Akeneo\Channel\Component\Model\ChannelInterface',
+        'Akeneo\Channel\Component\Repository\ChannelRepositoryInterface',
+
+        // TIP-922: PIM/Enrichment should not be linked to Currency
+        'Akeneo\Channel\Component\Repository\CurrencyRepositoryInterface',
+
+        // TIP-924 PIM/Enrichment should not be linked to User
+        'Akeneo\UserManagement\Component\Model\UserInterface', // ideally, we should have a "Product Contributor"
+
+        // TIP-933: CategoryRepository should not depend on Gedmo
+        'Gedmo\Tree\Entity\Repository\NestedTreeRepository',
+
+        // TIP-934: AttributeIsAFamilyVariantAxis is part of Structure
+        // TIP-935: AddBooleanValuesToNewProductSubscriber design problem
+        'Akeneo\Pim\Structure\Component\Model\VariantAttributeSetInterface',
+
+        //TIP-936: PIM/Enrichment should not be linked to FamilyVariant
+        'Akeneo\Pim\Structure\Component\Model\FamilyVariantInterface',
+        'Akeneo\Pim\Structure\Component\Repository\FamilyVariantRepositoryInterface',
+
         // TODO remove all links by reference
         'Akeneo\Pim\Structure\Component\Model\AttributeInterface',
-        'Akeneo\Pim\Structure\Component\Model\AttributeOptionInterface',
         'Akeneo\Pim\Structure\Component\Model\FamilyInterface',
-        'Akeneo\Pim\Structure\Component\Model\FamilyVariantInterface',
-        'Akeneo\Pim\Structure\Component\Model\GroupTypeInterface',
-        'Akeneo\Pim\Structure\Component\Model\VariantAttributeSetInterface',
-        'Akeneo\Channel\Component\Model\ChannelInterface',
-        'Akeneo\Channel\Component\Model\LocaleInterface',
-        'Akeneo\UserManagement\Component\Model\UserInterface', // ideally, we should have a "Product Contributor"
         // TODO relationship between bounded context (query data though repository)
-        'Akeneo\Channel\Component\Repository\LocaleRepositoryInterface',
-        'Akeneo\Channel\Component\Repository\CurrencyRepositoryInterface',
-        'Akeneo\Channel\Component\Repository\ChannelRepositoryInterface',
-        'Akeneo\Pim\Structure\Component\Repository\AttributeOptionRepositoryInterface',
         'Akeneo\Pim\Structure\Component\Repository\FamilyRepositoryInterface',
-        'Akeneo\Pim\Structure\Component\Repository\FamilyVariantRepositoryInterface',
         'Akeneo\Pim\Structure\Component\Repository\AttributeRepositoryInterface',
         'Akeneo\Pim\Structure\Component\Repository\AttributeRequirementRepositoryInterface',
         'Akeneo\Pim\Structure\Component\Repository\ExternalApi\AttributeRepositoryInterface',
@@ -54,8 +76,6 @@ $rules = [
         'Akeneo\Pim\Structure\Component\AttributeTypes',
         // TODO: : EASY PICK! API PaginatorInterface should catch ServerErrorResponseException and throw its own exception,
         'Elasticsearch\Common\Exceptions\ServerErrorResponseException',
-        // TODO: used in CategoryRepository for method findTranslatedLabels => can be reworked for a query (and remove the extend of Gedmo repository)
-        'Gedmo\Tree\Entity\Repository\NestedTreeRepository',
         // TODO: we should not inject the UserContext as a service
         'Akeneo\UserManagement\Bundle\Context\UserContext',
         // TODO: use to find the repository of the reference data (often to check if the reference data exists, sometimes we really need more information)
@@ -74,37 +94,70 @@ $rules = [
         'Symfony\Component',
         'Akeneo\Tool\Component',
         'Doctrine\Common',
-        // TODO remove all links by reference
-        'Akeneo\UserManagement\Component\Model\UserInterface',
+
+        // TIP-918: PIM/Enrichment should not be linked to GroupType
+        'Akeneo\Pim\Structure\Component\Repository\GroupTypeRepositoryInterface',
+
+        // TIP-920: PIM/Enrichment should not be linked to Locale
         'Akeneo\Channel\Component\Model\LocaleInterface',
-        'Akeneo\Channel\Component\Model\ChannelInterface',
-        'Akeneo\Pim\Structure\Component\Model\FamilyInterface',
-        'Akeneo\Pim\Structure\Component\Model\FamilyVariantInterface',
-        'Akeneo\Pim\Structure\Component\Model\AttributeInterface',
-        'Akeneo\Pim\Structure\Component\Model\AttributeOptionInterface',
-        'Akeneo\Pim\Structure\Component\Model\CommonAttributeCollection',
-        'Akeneo\Pim\Structure\Component\Model\VariantAttributeSetInterface',
-        'Akeneo\Pim\Structure\Component\Model\AssociationTypeInterface',
-        'Akeneo\Pim\Structure\Component\Model\AttributeGroupInterface',
-        'Akeneo\Pim\Structure\Component\Model\GroupTypeInterface',
-        // TODO relationship between bounded context (query data though repository)
-        'Akeneo\Channel\Component\Repository\ChannelRepositoryInterface',
         'Akeneo\Channel\Component\Repository\LocaleRepositoryInterface',
+
+        // TIP-921: PIM/Enrichment should not be linked to Channel
+        'Akeneo\Channel\Component\Model\LocaleInterface',
+        'Akeneo\Channel\Component\Repository\LocaleRepositoryInterface',
+
+        // TIP-922: PIM/Enrichment should not be linked to Currency
         'Akeneo\Channel\Component\Repository\CurrencyRepositoryInterface',
         'Akeneo\Channel\Component\Query\FindActivatedCurrenciesInterface',
-        'Akeneo\Pim\Structure\Component\Repository\GroupTypeRepositoryInterface',
-        'Akeneo\Pim\Structure\Component\Repository\AttributeRepositoryInterface',
-        'Akeneo\Pim\Structure\Component\Repository\FamilyVariantRepositoryInterface',
-        'Akeneo\Pim\Structure\Component\Repository\FamilyRepositoryInterface',
-        'Akeneo\Pim\Structure\Component\Repository\AssociationTypeRepositoryInterface',
-        'Akeneo\Pim\Structure\Component\Repository\ExternalApi\AttributeRepositoryInterface',
+
+        // TIP-926: Each context should have its own "User"
+        // TIP-924: PIM/Enrichment should not be linked to User
+        'Akeneo\UserManagement\Component\Model\UserInterface',
+
+        // TIP-926: Each context should have its own "User"
+        // TIP-925: WIP - PIM/Enrichment should not be linked to UserManager
+        'Akeneo\UserManagement\Bundle\Manager\UserManager',
+
+        // TIP-927: Move EnsureConsistentAttributeGroupOrderTasklet to Structure
+        'Akeneo\Pim\Structure\Component\Model\AttributeGroupInterface',
         'Akeneo\Pim\Structure\Bundle\Doctrine\ORM\Query\FindAttributeGroupOrdersEqualOrSuperiorTo', //should not use bundle in component
-        //TODO: should not use bundle in component
+
+        // TIP-928: PIM/Enrichment should not be linked to AssociationType
+        'Akeneo\Pim\Structure\Component\Model\AssociationTypeInterface',
+        'Akeneo\Pim\Structure\Component\Repository\AssociationTypeRepositoryInterface',
+
+        // TIP-929: Extract the Attribute part of the ValidMetricValidator
+        // TIP-929: Extract the Attribute part of the ValidMetricValidator
+        'Akeneo\Pim\Structure\Component\Validator\Constraints\ValidMetric',
+
+        // TIP-930: ValueCollectionFactory should not log
+        'Psr\Log\LoggerInterface',
+
+        // TIP-931: SearchQueryBuilder design problem
         'Akeneo\Pim\Enrichment\Bundle\Elasticsearch\SearchQueryBuilder',
+
+        // TIP-932: KeepOnlyValuesForVariation should use the public API related to the root aggregate Family Variant
+        'Akeneo\Pim\Structure\Component\Model\CommonAttributeCollection',
+
+        // TIP-934: AttributeIsAFamilyVariantAxis is part of Structure
+        // TIP-935: AddBooleanValuesToNewProductSubscriber design problem
+        'Akeneo\Pim\Structure\Component\Model\VariantAttributeSetInterface',
+
+        //TIP-936: PIM/Enrichment should not be linked to FamilyVariant
+        'Akeneo\Pim\Structure\Component\Model\FamilyVariantInterface',
+        'Akeneo\Pim\Structure\Component\Repository\FamilyVariantRepositoryInterface',
+
+        // TODO remove all links by reference
+        'Akeneo\Pim\Structure\Component\Model\FamilyInterface',
+        'Akeneo\Pim\Structure\Component\Model\AttributeInterface',
+        'Akeneo\Pim\Structure\Component\Model\AttributeOptionInterface',
+        // TODO relationship between bounded context (query data though repository)
+        'Akeneo\Channel\Component\Repository\ChannelRepositoryInterface',
+        'Akeneo\Pim\Structure\Component\Repository\AttributeRepositoryInterface',
+        'Akeneo\Pim\Structure\Component\Repository\FamilyRepositoryInterface',
+        'Akeneo\Pim\Structure\Component\Repository\ExternalApi\AttributeRepositoryInterface',
         // TODO public constant
         'Akeneo\Pim\Structure\Component\AttributeTypes',
-        // TODO a domain object should not log anything (today we ValueCollectionFactory for 2 things: 1. load products from DB, 2. create new products/values. For 1, we catch errors and log them. We should have 2 different factories instead)
-        'Psr\Log\LoggerInterface',
         // TODO a component should not rely on a bundle
         'Akeneo\Tool\Bundle\MeasureBundle\Convert\MeasureConverter',
         'Akeneo\Tool\Bundle\MeasureBundle\Exception\MeasureException',
@@ -122,14 +175,10 @@ $rules = [
         'Akeneo\Platform\Bundle\UIBundle\Provider\StructureVersion\StructureVersionProviderInterface',
         // TODO: do not inject user context as a service
         'Akeneo\UserManagement\Bundle\Context\UserContext',
-        // TODO: used to retrieve one user (could we user UserRepositoryInterface instead)?
-        'Akeneo\UserManagement\Bundle\Manager\UserManager',
         // TODO: is ProductMassActionRepositoryInterface still used?
         'Oro\Bundle\PimDataGridBundle\Doctrine\ORM\Repository\MassActionRepositoryInterface',
         // TODO: a component should not use a bundle
         'Akeneo\Tool\Bundle\VersioningBundle\Manager\VersionManager',
-        // TODO: extract from ValidMetric the enrichment part
-        'Akeneo\Pim\Structure\Component\Validator\Constraints\ValidMetric',
         // TODO: should not have a contextual service
         'Akeneo\Pim\Enrichment\Bundle\Context\CatalogContext',
         // TODO: EASY PICK! move JobLauncherInterface to component
