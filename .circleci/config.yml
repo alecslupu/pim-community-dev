@@ -53,6 +53,9 @@ jobs:
                 name: Start containers
                 command: |
                     docker-compose up -d
+          - run:
+                name: Install database
+                command: |
                     sleep 25 # wait mysql to be up
                     docker-compose exec fpm bin/console --env=behat pim:install:db
           - run:
@@ -64,6 +67,36 @@ jobs:
                 path: var/tests/phpunit
           - store_artifacts:
                 path: var/tests/phpunit
+
+  test_phpunit_end_to_end:
+    machine:
+      enabled: true
+      docker_layer_caching: true
+    parallelism: 1
+    steps:
+    - attach_workspace:
+        at: ~/
+    - run:
+        name: Change permissions on project dir in order to archive the project into the workspace
+        command: sudo chmod 777 ../project -R
+    - run:
+        name: Start containers
+        command: |
+          docker-compose up -d
+    - run:
+        name: Install database
+        command: |
+          sleep 25 # wait mysql to be up
+          docker-compose exec fpm bin/console --env=behat pim:install:db
+    - run:
+        name: PHPunit End to end
+        command: |
+          TESTFILES=$(circleci tests glob "tests/back/**/*EndToEnd.php" | circleci tests split)
+          .circleci/run_phpunit.sh $TESTFILES
+    - store_test_results:
+        path: var/tests/phpunit
+    - store_artifacts:
+        path: var/tests/phpunit
 
   test_legacy_behat:
     machine:
@@ -203,6 +236,9 @@ workflows:
       - test_phpunit_integration:
           requires:
             - build
+      - test_phpunit_end_to_end:
+          requires:
+            - test_phpunit_integration
 #      - test_legacy_behat:
 #          requires:
 #            - build
