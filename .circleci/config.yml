@@ -16,11 +16,6 @@ jobs:
             name: Setup the parameters.yml files
             command: ./bin/docker/pim-setup.sh
       - run:
-            name: Setup the batch size to 50
-            command: |
-              printf "    pim_job_product_batch_size: 50\n" >> app/config/parameters.yml
-              printf "    pim_job_product_batch_size: 50\n" >> app/config/parameters_test.yml
-      - run:
             name: Change permissions on project dir (default user = circleci (1001) and docker needs uid 1000)
             command: chmod 777 ../project -R
       - run:
