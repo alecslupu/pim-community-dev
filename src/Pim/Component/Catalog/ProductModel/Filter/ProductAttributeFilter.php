@@ -78,6 +78,11 @@ class ProductAttributeFilter implements AttributeFilterInterface
             $standardProduct['parent'] = $product->getParent()->getCode();
         }
 
+        if(isset($standardProduct['parent']) && '' === $standardProduct['parent'])
+        {
+            $standardProduct['parent'] = null;
+        }
+
         if (isset($standardProduct['parent']) &&
             null !== $parentProductModel = $this->productModelRepository->findOneByIdentifier($standardProduct['parent'])
         ) {
